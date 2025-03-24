@@ -1,3 +1,4 @@
+using Labo.API.Configurations;
 using Labo.Application.Interfaces;
 using Labo.Application.Interfaces.Repositories;
 using Labo.Application.Interfaces.Services;
@@ -22,21 +23,11 @@ builder.Services.AddDbContext<LaboContext>(
     o => o.UseSqlServer(builder.Configuration.GetConnectionString("Main"))
 );
 
-builder.Services.AddScoped<IMemberService, MemberService>();
-builder.Services.AddScoped<IMemberRepository, MemberRepository>();
-
-builder.Services.AddScoped(c => new SmtpClient
-{
-    Host = builder.Configuration["Smtp:Host"] ?? throw new Exception("Missing Smtp Configuration"),
-    Port = int.Parse(builder.Configuration["Smtp:Port"] ?? throw new Exception("Missing Smtp Configuration")),
-    Credentials = new NetworkCredential
-    {
-        UserName = builder.Configuration["Smtp:Username"] ?? throw new Exception("Missing Smtp Configuration"),
-        Password = builder.Configuration["Smtp:Password"] ?? throw new Exception("Missing Smtp Configuration"),
-    }
-
-});
+builder.Services.AddRepositories();
+builder.Services.AddServices();
+builder.Services.AddSmtp(builder.Configuration);
 builder.Services.AddScoped<IMailer, Mailer>();
+
 builder.Services.AddCors(b => b.AddDefaultPolicy(o =>
 {
     o.AllowAnyMethod();
@@ -53,6 +44,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseAuthorization();
+// app.UseAuthentication();
 
 app.MapControllers();
 

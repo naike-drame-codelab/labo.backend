@@ -16,7 +16,8 @@ namespace Labo.Infrastructure.Smtp
                 IsBodyHtml = true,
             };
             message.To.Add(new MailAddress(dest));
-            message.From = new MailAddress(configuration["Smtp:Username"] ?? throw new Exception("Missing smtp config"));
+            message.From = new MailAddress("noreply@chess.com");
+            // message.From = new MailAddress(configuration["Smtp:Username"] ?? throw new Exception("Missing smtp config"));
 
             foreach (var attachment in attachments) { 
                 message.Attachments.Add(attachment);
