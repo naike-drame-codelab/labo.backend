@@ -2,6 +2,7 @@
 using Labo.Application.Exceptions;
 using Labo.Application.Interfaces.Services;
 using Labo.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
@@ -10,6 +11,7 @@ namespace Labo.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize(Roles = "Admin")]
     public class MemberController(IMemberService memberService) : ControllerBase
     {
         [HttpPost]
