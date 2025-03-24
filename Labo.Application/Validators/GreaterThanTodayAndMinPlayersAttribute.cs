@@ -16,19 +16,18 @@ namespace Labo.Application.Validators
                 return new ValidationResult("Invalid date format.");
             }
 
-            var minPlayersProperty = validationContext.ObjectType.GetProperty("MinPlayers");
-            if (minPlayersProperty == null)
+            object? instance = validationContext.ObjectInstance;
+            if (instance == null)
             {
-                return new ValidationResult("MinPlayers property not found.");
+                return new ValidationResult("Validation context is invalid.");
             }
 
-            object? minPlayersValue = minPlayersProperty.GetValue(validationContext.ObjectInstance);
-            if (minPlayersValue is not int minPlayers)
+            if (instance.GetType().GetProperty("MinPlayers")?.GetValue(instance) is not int minPlayers)
             {
                 return new ValidationResult("Invalid MinPlayers value.");
             }
 
-            DateTime currentDate = DateTime.Now;
+            DateTime currentDate = DateTime.UtcNow;
             DateTime requiredEndDate = currentDate.AddDays(minPlayers);
 
             if (endOfRegistrationDate <= requiredEndDate)

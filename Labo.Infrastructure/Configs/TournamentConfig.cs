@@ -16,29 +16,29 @@ namespace Labo.Infrastructure.Configs
         {
             builder.Property(t => t.MinElo)
                 .HasDefaultValue(0);
-
             builder.Property(t => t.MaxElo)
                 .HasDefaultValue(3000);
-
-            builder.ToTable(t => t.HasCheckConstraint("CK_Tournament_MinPlayers", "MinPlayers BETWEEN 2 AND 32"));
-            builder.ToTable(t => t.HasCheckConstraint("CK_Tournament_MaxPlayers", "MaxPlayers BETWEEN 2 AND 32"));
-
             builder.Property(t => t.CurrentRound)
                .HasDefaultValue(0);
-
+            builder.Property(t => t.WomenOnly)
+               .HasDefaultValue(false);
             builder.Property(t => t.Status)
                 .HasDefaultValue(Status.Pending);
-
             builder.Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
-
             builder.Property(t => t.LastUpdatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            builder.ToTable(t => t.HasCheckConstraint("CK_Tournament_MinElo", "MinElo >= 0 AND MinElo <= 3000"));
-            builder.ToTable(t => t.HasCheckConstraint("CK_Tournament_MaxElo", "MaxElo >= 0 AND MaxElo <= 3000"));
-            builder.ToTable(t => t.HasCheckConstraint("CK_Tournament_EndOfRegistrationDate", "EndOfRegistrationDate > DATEADD(day, MinPlayers, GETDATE())"));
-
+            builder.ToTable(t =>
+            {
+                t.HasCheckConstraint("CK_Tournament_MinPlayers", "MinPlayers BETWEEN 2 AND 32");
+                t.HasCheckConstraint("CK_Tournament_MaxPlayers", "MaxPlayers BETWEEN 2 AND 32");
+                t.HasCheckConstraint("CK_Tournament_MinPlayers_MaxPlayers", "MinPlayers <= MaxPlayers");
+                t.HasCheckConstraint("CK_Tournament_MinElo", "MinElo >= 0 AND MinElo <= 3000");
+                t.HasCheckConstraint("CK_Tournament_MaxElo", "MaxElo >= 0 AND MaxElo <= 3000");
+                t.HasCheckConstraint("CK_Tournament_MinElo_MaxElo", "MinElo <= MaxElo");
+                t.HasCheckConstraint("CK_Tournament_EndOfRegistrationDate", "EndOfRegistrationDate > DATEADD(day, MinPlayers, GETDATE())");
+            });
         }
     }
 }

@@ -1,23 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Labo.Application.Validators
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+public class MinOrEqualMaxAttribute : ValidationAttribute
 {
-    public class MinOrEqualMaxAttribute : ValidationAttribute
+    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
-        public override bool IsValid(object? value)
+        var minEloProperty = validationContext.ObjectType.GetProperty("MinElo");
+        var maxEloProperty = validationContext.ObjectType.GetProperty("MaxElo");
+
+        if (minEloProperty == null || maxEloProperty == null)
+            return new ValidationResult("MinElo or MaxElo property not found.");
+
+        var minElo = (int?)minEloProperty.GetValue(validationContext.ObjectInstance);
+        var maxElo = (int?)maxEloProperty.GetValue(validationContext.ObjectInstance);
+
+        if (minElo.HasValue && maxElo.HasValue && minElo > maxElo)
         {
-            if (value is null) { return false; }
-
-            int eloValue = (int)value;
-
-            ErrorMessage = "The ELO must be between 0 (included) and 3000 (included).";
-
-            return eloValue >= 0 && eloValue <= 3000;
+            return new ValidationResult("MinElo must be less than or equal to MaxElo.");
         }
+
+        return ValidationResult.Success;
     }
 }

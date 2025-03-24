@@ -148,7 +148,9 @@ namespace Labo.Infrastructure.Migrations
                         .HasDefaultValue(0);
 
                     b.Property<bool>("WomenOnly")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.HasKey("Id");
 
@@ -162,7 +164,11 @@ namespace Labo.Infrastructure.Migrations
 
                             t.HasCheckConstraint("CK_Tournament_MinElo", "MinElo >= 0 AND MinElo <= 3000");
 
+                            t.HasCheckConstraint("CK_Tournament_MinElo_MaxElo", "MinElo <= MaxElo");
+
                             t.HasCheckConstraint("CK_Tournament_MinPlayers", "MinPlayers BETWEEN 2 AND 32");
+
+                            t.HasCheckConstraint("CK_Tournament_MinPlayers_MaxPlayers", "MinPlayers <= MaxPlayers");
                         });
                 });
 #pragma warning restore 612, 618

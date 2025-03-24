@@ -8,7 +8,7 @@ using Labo.Domain.Enums;
 
 namespace Labo.Application.DTO
 {
-    public class CreateTournamentResultDTO(Tournament t)
+    public record class CreateTournamentResultDTO(Tournament t)
     {
         public int Id { get; set; } = t.Id;
         public string Name { get; set; } = t.Name;

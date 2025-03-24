@@ -1,38 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using Labo.Application.Validators;
 using Labo.Domain.Enums;
 
 namespace Labo.Application.DTO
 {
-    public class CreateTournamentDTO
-    {
-        [Required]
-        public string Name { get; set; } = null!;
-        public string? Location { get; set; }
-
-        [Required]
-        public int MinPlayers { get; set; }
-
-        [Required]
-        public int MaxPlayers { get; set; }
-
-        [MinOrEqualMax]
-        public int? MinElo { get; set; }
-        [MinOrEqualMax]
-        public int? MaxElo { get; set; }
-
-        public required Category[] Categories { get; set; }
-
-        [Required]
-        [GreaterThanTodayAndMinPlayers]
-        public DateTime EndOfRegistrationDate { get; set; }
-
-        public bool WomenOnly { get; set; }
-
-    }
+    [MinOrEqualMax]
+    public record class CreateTournamentDTO(
+        [Required] string Name,
+        string? Location,
+        [Required] int MinPlayers,
+        [Required] int MaxPlayers,
+        [Range(0, 3000)] int? MinElo,
+        [Range(0, 3000)] int? MaxElo,
+        [Required, MinLength(1, ErrorMessage = "At least one category is required.")] Category[] Categories,
+        [Required, GreaterThanTodayAndMinPlayers] DateTime EndOfRegistrationDate,
+        bool WomenOnly = false
+    );
 }
