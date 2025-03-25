@@ -14,9 +14,17 @@ using System.Transactions;
 
 namespace Labo.Application.Services
 {
-    public class TournamentService(ITournamentRepository tournamentRepository,
-        IMailer mailer) : ITournamentService
+    public class TournamentService : ITournamentService
     {
+        private readonly ITournamentRepository tournamentRepository;
+        private readonly IMailer mailer;
+
+        public TournamentService(ITournamentRepository tournamentRepository, IMailer mailer)
+        {
+            this.tournamentRepository = tournamentRepository;
+            this.mailer = mailer;
+        }
+
         public Tournament Create(CreateTournamentDTO dto)
         {
             if (tournamentRepository.Any(m => m.Name == dto.Name))
@@ -24,8 +32,7 @@ namespace Labo.Application.Services
                 throw new DuplicatePropertyException(nameof(dto.Name));
             }
 
-            using TransactionScope transactionScope = new ();
-            // créer le tournoi
+            using TransactionScope transactionScope = new();
             Tournament t = tournamentRepository.Add(new Tournament
             {
                 Name = dto.Name,
@@ -38,16 +45,27 @@ namespace Labo.Application.Services
                 EndOfRegistrationDate = dto.EndOfRegistrationDate,
                 WomenOnly = dto.WomenOnly,
             });
-            // envoyer un email aux membres répondant aux conditions
-            // créer class de check qui prendra un Member m et un Tournament t
-            // foreach(Member m of eligibleMembers)
-            // {
-            //      mailer.Send(m.Email, $"Inscriptions ouvertes pour le tournoi {t.Name} ", $"Cher m.Username, vous remplissez les conditions pour participer au tournoi ! ");
-            // };
-            transactionScope.Complete();
 
+            transactionScope.Complete();
             return t;
         }
 
+        public void Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        //public void Delete(int id)
+        //{
+        //    Tournament t = tournamentRepository.FindOne(id);
+        //    tournamentRepository.Remove(t);
+        //}
+
+        public List<Tournament> GetAll() => tournamentRepository.Find();
+
+        public Tournament GetById(int id)
+        {
+            return tournamentRepository.FindOne(id) ?? throw new KeyNotFoundException($"Tournament with id {id} not found.");
+        }
     }
 }

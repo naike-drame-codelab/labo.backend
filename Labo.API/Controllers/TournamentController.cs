@@ -14,6 +14,39 @@ namespace Labo.API.Controllers
     //[Authorize(Roles = "Admin")]
     public class TournamentController(ITournamentService tournamentService) : ControllerBase
     {
+        [HttpGet]
+        public IActionResult Get()
+        {
+            try
+            {
+                List<Tournament> list = tournamentService.GetAll();
+                return Ok(list);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        
+        
+        [HttpGet("{id}")]
+        public IActionResult Get([FromRoute] int id)
+        {
+            try
+            {
+                Tournament tournament = tournamentService.GetById(id);
+                if (tournament == null)
+                {
+                    return NotFound();
+                }
+                return Ok(tournament);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        
         [HttpPost]
         public IActionResult Post([FromBody] CreateTournamentDTO dto)
         {
@@ -31,6 +64,26 @@ namespace Labo.API.Controllers
             //{
             //    return Problem("L'email n'a pas pu être envoyé");
             //}
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete([FromRoute] int id)
+        {
+            try
+            {
+                Tournament tournament = tournamentService.GetById(id);
+                if (tournament == null)
+                {
+                    return NotFound();
+                }
+                tournamentService.Delete(id);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+
+                return NotFound();
+            }
         }
     }
 }
