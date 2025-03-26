@@ -52,14 +52,14 @@ namespace Labo.Application.Services
 
         public void Delete(int id)
         {
-            throw new NotImplementedException();
-        }
+            Tournament? t = tournamentRepository.FindOne(id);
+            if (t == null)
+            {
+                throw new KeyNotFoundException($"Tournament with id {id} not found.");
+            }
 
-        //public void Delete(int id)
-        //{
-        //    Tournament t = tournamentRepository.FindOne(id);
-        //    tournamentRepository.Remove(t);
-        //}
+            tournamentRepository.Remove(t);
+        }
 
         public List<Tournament> GetAll() => tournamentRepository.Find();
 
