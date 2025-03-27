@@ -1,14 +1,13 @@
+using System.Text;
 using Labo.API.Configurations;
+using Labo.API.Security;
 using Labo.Application.Interfaces;
-using Labo.Application.Interfaces.Repositories;
-using Labo.Application.Interfaces.Services;
-using Labo.Application.Services;
+using Labo.Application.Interfaces.Security;
 using Labo.Infrastructure;
-using Labo.Infrastructure.Repositories;
 using Labo.Infrastructure.Smtp;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
-using System.Net.Mail;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +21,24 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<LaboContext>(
     o => o.UseSqlServer(builder.Configuration.GetConnectionString("Main"))
 );
+
+TokenManager.Config config = builder.Configuration.GetSection("Jwt").Get<TokenManager.Config>() ?? throw new Exception("Missing Jwt config.");
+builder.Services.AddSingleton<ITokenManager, TokenManager>(
+    _ => new TokenManager(config)
+ );
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+        o => o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = config.Issuer,
+            ValidateAudience = true,
+            ValidAudience = config.Audience,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.Secret))
+        }
+    );
 
 builder.Services.AddRepositories();
 builder.Services.AddServices();
@@ -43,8 +60,8 @@ app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseAuthentication();
 app.UseAuthorization();
-// app.UseAuthentication();
 
 app.MapControllers();
 

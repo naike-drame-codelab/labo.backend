@@ -19,6 +19,7 @@ namespace Labo.API.Configurations
         {
             services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<ITournamentService, TournamentService>();
+            services.AddScoped<IAuthService, AuthService>();
         }
 
         public static void AddSmtp(this IServiceCollection services, ConfigurationManager config)

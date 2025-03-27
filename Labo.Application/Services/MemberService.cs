@@ -6,6 +6,7 @@ using Labo.Application.Interfaces.Services;
 using Labo.Application.Utils;
 using Labo.Domain.Entities;
 using Labo.Domain.Enums;
+using Labo.Infrastructure.Repositories;
 using System.Transactions;
 
 namespace Labo.Application.Services
@@ -54,9 +55,24 @@ namespace Labo.Application.Services
             // envoyer un email à ce membre
             mailer.Send(m.Email, "Bienvenue sur le site Labo", $"Votre nom d'utilisateur est {m.Username} et votre mot de passe est {password}");
             transactionScope.Complete();
-
             return m;
         }
-    
+
+        public List<Member> GetAll() => memberRepository.Find();
+
+        public Member GetById(int id)
+        {
+            return memberRepository.FindOne(id) ?? throw new KeyNotFoundException($"Tournament with id {id} not found.");
+        }
+        public void Delete(int id)
+        {
+            Member? t = memberRepository.FindOne(id);
+            if (t == null)
+            {
+                throw new KeyNotFoundException($"Member with id {id} not found.");
+            }
+
+            memberRepository.Remove(t);
+        }
     }
 }
