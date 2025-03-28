@@ -23,6 +23,7 @@ namespace Labo.Domain.Entities
         public DateTime EndOfRegistrationDate { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime LastUpdatedAt { get; set; }
+        public List<Member>? Players { get; set; }
 
     }
 }

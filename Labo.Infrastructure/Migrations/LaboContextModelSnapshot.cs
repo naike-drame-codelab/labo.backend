@@ -171,6 +171,36 @@ namespace Labo.Infrastructure.Migrations
                             t.HasCheckConstraint("CK_Tournament_MinPlayers_MaxPlayers", "MinPlayers <= MaxPlayers");
                         });
                 });
+
+            modelBuilder.Entity("Registrations", b =>
+                {
+                    b.Property<int>("PlayersId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TournamentsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PlayersId", "TournamentsId");
+
+                    b.HasIndex("TournamentsId");
+
+                    b.ToTable("Inscriptions", (string)null);
+                });
+
+            modelBuilder.Entity("Registrations", b =>
+                {
+                    b.HasOne("Labo.Domain.Entities.Member", null)
+                        .WithMany()
+                        .HasForeignKey("PlayersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Labo.Domain.Entities.Tournament", null)
+                        .WithMany()
+                        .HasForeignKey("TournamentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 #pragma warning restore 612, 618
         }
     }

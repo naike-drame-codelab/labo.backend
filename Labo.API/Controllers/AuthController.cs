@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Labo.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
     public class AuthController(IAuthService authService, ITokenManager tokenManager) : ControllerBase
     {

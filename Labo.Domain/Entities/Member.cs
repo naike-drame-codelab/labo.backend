@@ -13,5 +13,6 @@ namespace Labo.Domain.Entities
         public DateTime BirthDate { get; set; }
         public Role Role { get; set; }
         public Gender Gender { get; set; }
+        public List<Tournament>? Tournaments { get; set; }
     }
 }

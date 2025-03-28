@@ -39,6 +39,8 @@ namespace Labo.Infrastructure.Configs
                 t.HasCheckConstraint("CK_Tournament_MinElo_MaxElo", "MinElo <= MaxElo");
                 t.HasCheckConstraint("CK_Tournament_EndOfRegistrationDate", "EndOfRegistrationDate > DATEADD(day, MinPlayers, GETDATE())");
             });
+
+            builder.HasMany(t => t.Players).WithMany(p => p.Tournaments).UsingEntity("Registrations", i => i.ToTable("Inscriptions"));
         }
     }
 }

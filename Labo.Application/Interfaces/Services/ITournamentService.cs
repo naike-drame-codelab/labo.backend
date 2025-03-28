@@ -9,5 +9,6 @@ namespace Labo.Application.Interfaces.Services
         void Delete(int id);
         List<Tournament> GetAll();
         Tournament GetById(int id);
+
     }
 }
