@@ -47,8 +47,8 @@ builder.Services.AddScoped<IMailer, Mailer>();
 
 builder.Services.AddCors(b => b.AddDefaultPolicy(o =>
 {
+    o.WithOrigins("https://brave-island-0831b9e03.6.azurestaticapps.net");
     o.AllowAnyMethod();
-    o.AllowAnyOrigin();
     o.AllowAnyHeader();
 }));
 
